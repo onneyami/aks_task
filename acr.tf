@@ -3,8 +3,7 @@ resource "azurerm_container_registry" "acr" {
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
   sku                 = var.acr_sku
-  admin_enabled       = true
-  role_assignment_mode = "AbacRepositoryPermissions"
+  admin_enabled       = false
 
   #tags = {
   #  environment = "dev"
