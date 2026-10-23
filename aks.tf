@@ -20,6 +20,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   # Prevents Terraform from attempting to disable OIDC
   oidc_issuer_enabled = true
 
+  azure_policy_enabled = true
+
   identity {
     type = "SystemAssigned"
   }
