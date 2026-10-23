@@ -19,6 +19,6 @@ resource "azurerm_role_assignment" "acr_repository_writer" {
 
 resource "azurerm_role_assignment" "acr_catalog_lister" {
   principal_id         = data.azurerm_client_config.current.object_id
-  role_definition_name = "Container Registry Catalog Lister"
+  role_definition_name = "Container Registry Repository Catalog Lister"
   scope                = azurerm_container_registry.acr.id
 }
