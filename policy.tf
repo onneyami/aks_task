@@ -1,21 +1,23 @@
-# Built-in policy: Kubernetes cluster should not allow privileged containers
-data "azurerm_policy_definition" "k8s_no_privileged" {
-  name = "95edb821-ddaf-4404-9732-666045e056b4"
+# Retrieve the built-in Pod Security Baseline Initiative
+data "azurerm_policy_set_definition" "aks_pod_security_baseline" {
+  display_name = "Kubernetes cluster pod security baseline standards for Linux-based workloads"
 }
 
-# Assign to rg-andrei so it evaluates the AKS cluster
-resource "azurerm_resource_group_policy_assignment" "k8s_policy" {
-  name                 = "audit-k8s-privileged"
-  display_name         = "Audit privileged containers on AKS"
-  description          = "Audits pods and containers requesting privileged mode in AKS"
+# Assign the initiative to the Resource Group scope with Deny enforcement
+resource "azurerm_resource_group_policy_assignment" "aks_pod_security_baseline" {
+  name                 = "aks-pod-security-baseline"
+  display_name         = "Kubernetes cluster pod security baseline standards for Linux-based workloads"
+  description          = "Enforces Linux pod security baseline standards on all AKS clusters within the resource group"
   resource_group_id    = data.azurerm_resource_group.rg.id
-  policy_definition_id = data.azurerm_policy_definition.k8s_no_privileged.id
+  policy_definition_id = data.azurerm_policy_set_definition.aks_pod_security_baseline.id
 
+  # Enables admission enforcement
   enforce = true
 
+  # Sets the initiative parameter "effect" to Deny
   parameters = jsonencode({
     effect = {
-      value = "Audit"
+      value = "Deny"
     }
     excludedNamespaces = {
       value = [
