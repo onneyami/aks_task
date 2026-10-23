@@ -6,7 +6,7 @@ resource "kubernetes_storage_class_v1" "managed_premium_retain" {
 
   storage_provisioner    = "disk.csi.azure.com"
   reclaim_policy         = "Retain"
-  volume_binding_mode    = "WaitForFirstConsumer"
+  volume_binding_mode   = "WaitForFirstConsumer"
   allow_volume_expansion = true
 
   parameters = {
@@ -31,6 +31,9 @@ resource "kubernetes_persistent_volume_claim_v1" "pvc" {
       }
     }
   }
+
+  # Prevents Terraform from waiting for the Bound state before creating the pod
+  wait_until_bound = false
 }
 
 # Task 3: Pod with persistent volume mount
@@ -59,4 +62,10 @@ resource "kubernetes_pod_v1" "nginx" {
       }
     }
   }
+
+  timeouts {
+    create = "10m"
+  }
+
+  depends_on = [kubernetes_persistent_volume_claim_v1.pvc]
 }
