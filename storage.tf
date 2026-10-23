@@ -36,7 +36,7 @@ resource "kubernetes_persistent_volume_claim_v1" "pvc" {
   wait_until_bound = false
 }
 
-# Task 3: Pod with persistent volume mount
+# Task 3: Pod with persistent volume mount and required resource limits
 resource "kubernetes_pod_v1" "nginx" {
   metadata {
     name      = "nginx"
@@ -47,6 +47,18 @@ resource "kubernetes_pod_v1" "nginx" {
     container {
       name  = "myfrontend"
       image = "mcr.microsoft.com/azurelinux/base/nginx:1.28"
+
+      # Satisfies Gatekeeper container limits policy
+      resources {
+        limits = {
+          cpu    = "500m"
+          memory = "512Mi"
+        }
+        requests = {
+          cpu    = "100m"
+          memory = "128Mi"
+        }
+      }
 
       volume_mount {
         mount_path = "/mnt/azure"
