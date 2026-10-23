@@ -17,3 +17,13 @@ output "acr_id" {
   description = "The ID of the Azure Container Registry"
   value       = azurerm_container_registry.acr.id
 }
+
+output "aks_cluster_name" {
+  description = "The name of the provisioned AKS cluster"
+  value       = azurerm_kubernetes_cluster.aks.name
+}
+
+output "aks_get_credentials_command" {
+  description = "Command to configure kubectl credentials"
+  value       = "az aks get-credentials --resource-group ${data.azurerm_resource_group.rg.name} --name ${azurerm_kubernetes_cluster.aks.name}"
+}
