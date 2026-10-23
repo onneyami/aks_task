@@ -14,27 +14,24 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = data.azurerm_resource_group.rg.name
   dns_prefix          = "${var.aks_cluster_name}-${random_string.acr_suffix.result}"
 
-  # Step 7: Pricing Tier explicitly set to Free
-  sku_tier = "Free"
-
-  # Step 7: Local accounts with Kubernetes RBAC (no Azure AD / Azure RBAC enforcement)
+  sku_tier               = "Free"
   local_account_disabled = false
 
-  # Step 7: Managed Identity for cluster control plane
+  # Prevents Terraform from attempting to disable OIDC
+  oidc_issuer_enabled = true
+
   identity {
     type = "SystemAssigned"
   }
 
-  # Step 8: System node pool (Dev/Test preset: 1 node, no Availability Zones)
   default_node_pool {
     name       = "systempool"
     node_count = 1
     vm_size    = var.aks_node_size
     os_sku     = "Ubuntu"
-    zones      = [] # Availability zones: None
+    zones      = []
   }
 
-  # Step 11: Networking - Azure CNI Overlay powered by Cilium
   network_profile {
     network_plugin      = "azure"
     network_plugin_mode = "overlay"
@@ -42,7 +39,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
     network_policy      = "cilium"
   }
 
-  # Step 12: Observability - Container Insights
   oms_agent {
     log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
   }
