@@ -27,3 +27,8 @@ output "aks_get_credentials_command" {
   description = "Command to configure kubectl credentials"
   value       = "az aks get-credentials --resource-group ${data.azurerm_resource_group.rg.name} --name ${azurerm_kubernetes_cluster.aks.name}"
 }
+
+output "policy_assignment_id" {
+  description = "The Resource ID of the Azure Policy Assignment"
+  value       = azurerm_resource_group_policy_assignment.k8s_policy.id
+}
