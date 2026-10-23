@@ -1,9 +1,9 @@
-# Query the built-in Kubernetes policy definition
+# Built-in policy: Kubernetes cluster should not allow privileged containers
 data "azurerm_policy_definition" "k8s_no_privileged" {
-  display_name = "Kubernetes cluster shouldn't allow privileged containers"
+  name = "95edb821-ddaf-4404-9732-666045e056b4"
 }
 
-# Assign the policy at Resource Group scope
+# Assign to rg-andrei so it evaluates the AKS cluster
 resource "azurerm_resource_group_policy_assignment" "k8s_policy" {
   name                 = "audit-k8s-privileged"
   display_name         = "Audit privileged containers on AKS"
@@ -11,10 +11,8 @@ resource "azurerm_resource_group_policy_assignment" "k8s_policy" {
   resource_group_id    = data.azurerm_resource_group.rg.id
   policy_definition_id = data.azurerm_policy_definition.k8s_no_privileged.id
 
-  # Policy enforcement = Enabled
   enforce = true
 
-  # Parameters configuration
   parameters = jsonencode({
     effect = {
       value = "Audit"
