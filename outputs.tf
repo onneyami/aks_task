@@ -32,3 +32,8 @@ output "policy_assignment_id" {
   description = "The Resource ID of the Azure Policy Assignment"
   value       = azurerm_resource_group_policy_assignment.k8s_policy.id
 }
+
+output "kubernetes_namespace" {
+  description = "The deployed Kubernetes namespace name"
+  value       = kubernetes_namespace.custom_ns.metadata[0].name
+}
