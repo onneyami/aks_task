@@ -28,7 +28,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   default_node_pool {
     name       = "systempool"
-    node_count = 1
+    node_count = 2
     vm_size    = var.aks_node_size
     os_sku     = "Ubuntu"
     zones      = []
