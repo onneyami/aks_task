@@ -37,3 +37,8 @@ output "kubernetes_namespace" {
   description = "The deployed Kubernetes namespace name"
   value       = kubernetes_namespace.custom_ns.metadata[0].name
 }
+
+output "aks_get_credentials" {
+  description = "Command to configure kubectl credentials for the AKS cluster"
+  value       = "az aks get-credentials --resource-group ${data.azurerm_resource_group.rg.name} --name ${azurerm_kubernetes_cluster.aks.name}"
+}
