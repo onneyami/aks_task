@@ -28,12 +28,6 @@ variable "aks_node_size" {
   default     = "Standard_D4ds_v5" # Fallback to Standard_D2s_v5 if vCPU quota in rg-andrei is restricted
 }
 
-variable "namespace_name" {
-  description = "Name of the Kubernetes namespace"
-  type        = string
-  default     = "workloads"
-}
-
 variable "vnet_name" {
   description = "Name of the virtual network"
   type        = string
