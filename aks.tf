@@ -1,4 +1,4 @@
-# Container Insights (Azure Monitor) Log Analytics Workspace
+# Log Analytics Workspace
 resource "azurerm_log_analytics_workspace" "law" {
   name                = "law-${var.aks_cluster_name}-${random_string.acr_suffix.result}"
   location            = data.azurerm_resource_group.rg.location
@@ -7,38 +7,42 @@ resource "azurerm_log_analytics_workspace" "law" {
   retention_in_days   = 30
 }
 
-# Azure Kubernetes Service (AKS) Cluster
+# AKS Cluster configured for Azure CNI and Windows workloads
 resource "azurerm_kubernetes_cluster" "aks" {
-  name                = var.aks_cluster_name
+  name                = "aks-01"
   location            = data.azurerm_resource_group.rg.location
   resource_group_name = data.azurerm_resource_group.rg.name
-  dns_prefix          = "${var.aks_cluster_name}-${random_string.acr_suffix.result}"
+  dns_prefix          = "aks-01-dns"
 
-  sku_tier               = "Free"
-  local_account_disabled = false
-
-  # Prevents Terraform from attempting to disable OIDC
-  oidc_issuer_enabled = true
-
-  azure_policy_enabled = true
+  sku_tier                = "Free"
+  local_account_disabled  = false
 
   identity {
     type = "SystemAssigned"
   }
 
-  default_node_pool {
-    name       = "systempool"
-    node_count = 2
-    vm_size    = var.aks_node_size
-    os_sku     = "Ubuntu"
-    zones      = []
+  # Required credentials for Windows node administration
+  windows_profile {
+    admin_username = "azureuser"
+    admin_password = "P@ssw0rdAKS2026!" # Meets Azure complexity requirements
   }
 
+  # Linux System Pool
+  default_node_pool {
+    name           = "agentpool"
+    node_count     = 2 # Reduce to 1 if vCPU quota is restricted
+    vm_size        = "Standard_D2s_v3"
+    vnet_subnet_id = azurerm_subnet.aks_subnet.id
+    os_sku         = "Ubuntu"
+    zones          = []
+  }
+
+  # Standard Azure CNI configuration
   network_profile {
-    network_plugin      = "azure"
-    network_plugin_mode = "overlay"
-    network_data_plane  = "cilium"
-    network_policy      = "cilium"
+    network_plugin     = "azure"
+    network_policy     = "none"
+    service_cidr       = "172.16.0.0/22"
+    dns_service_ip     = "172.16.3.254"
   }
 
   oms_agent {
@@ -46,7 +50,21 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-# Step 12: ACR Attachment (AcrPull permission for AKS Kubelet Managed Identity)
+# Windows 2022 User Node Pool (w1pool)
+resource "azurerm_kubernetes_cluster_node_pool" "windows" {
+  name                  = "w1pool"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  vm_size               = "Standard_D2s_v3"
+  node_count            = 2 # Reduce to 1 if vCPU quota is restricted
+  os_type               = "Windows"
+  os_sku                = "Windows2022"
+  mode                  = "User"
+  max_pods              = 30
+  vnet_subnet_id        = azurerm_subnet.aks_subnet.id
+  zones                 = []
+}
+
+# Grant AKS Kubelet Identity AcrPull rights on the Container Registry
 resource "azurerm_role_assignment" "aks_acr_pull" {
   scope                            = azurerm_container_registry.acr.id
   role_definition_name             = "AcrPull"
