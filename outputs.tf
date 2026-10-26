@@ -28,15 +28,15 @@ output "aks_get_credentials_command" {
   value       = "az aks get-credentials --resource-group ${data.azurerm_resource_group.rg.name} --name ${azurerm_kubernetes_cluster.aks.name}"
 }
 
-output "policy_assignment_id" {
-  description = "The Resource ID of the Azure Policy Assignment"
-  value       = azurerm_resource_group_policy_assignment.aks_pod_security_baseline.id
-}
+#output "policy_assignment_id" {
+#  description = "The Resource ID of the Azure Policy Assignment"
+#  value       = azurerm_resource_group_policy_assignment.aks_pod_security_baseline.id
+#}
 
-output "kubernetes_namespace" {
-  description = "The deployed Kubernetes namespace name"
-  value       = kubernetes_namespace.custom_ns.metadata[0].name
-}
+#output "kubernetes_namespace" {
+#  description = "The deployed Kubernetes namespace name"
+#  value       = kubernetes_namespace.custom_ns.metadata[0].name
+#}
 
 output "aks_get_credentials" {
   description = "Command to configure kubectl credentials for the AKS cluster"
