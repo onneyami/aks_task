@@ -33,3 +33,27 @@ variable "namespace_name" {
   type        = string
   default     = "workloads"
 }
+
+variable "vnet_name" {
+  description = "Name of the virtual network"
+  type        = string
+  default     = "vnet-01"
+}
+
+variable "vnet_address_space" {
+  description = "Address space for the virtual network"
+  type        = string
+  default     = "10.0.0.0/16"
+}
+
+variable "aks_subnet_name" {
+  description = "Name of the subnet for AKS"
+  type        = string
+  default     = "aks-subnet"
+}
+
+variable "aks_subnet_address_prefix" {
+  description = "Address prefix for the AKS subnet"
+  type        = string
+  default     = "10.0.0.0/20"
+}
