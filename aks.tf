@@ -40,7 +40,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
   # Standard Azure CNI configuration
   network_profile {
     network_plugin     = "azure"
-    network_policy     = "none"
     service_cidr       = "172.16.0.0/22"
     dns_service_ip     = "172.16.3.254"
   }
