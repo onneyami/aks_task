@@ -7,10 +7,10 @@ resource "azurerm_virtual_network" "vnet" {
 }
 
 resource "azurerm_subnet" "aks_subnet" {
-  name                 = var.aks_cluster_name
+  name                 = var.aks_subnet_name
   resource_group_name  = data.azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = [var.acr_name_prefix]
+  address_prefixes     = [var.aks_subnet_address_prefix]
 }
 
 # Discovers your user object ID from 'az login' for ABAC role assignments

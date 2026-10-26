@@ -14,8 +14,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = data.azurerm_resource_group.rg.name
   dns_prefix          = "aks-01-dns"
 
-  sku_tier                = "Free"
-  local_account_disabled  = false
+  sku_tier               = "Free"
+  local_account_disabled = false
 
   identity {
     type = "SystemAssigned"
@@ -39,9 +39,9 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   # Standard Azure CNI configuration
   network_profile {
-    network_plugin     = "azure"
-    service_cidr       = "172.16.0.0/22"
-    dns_service_ip     = "172.16.3.254"
+    network_plugin = "azure"
+    service_cidr   = "172.16.0.0/22"
+    dns_service_ip = "172.16.3.254"
   }
 
   oms_agent {
