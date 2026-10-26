@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hellofromnode-deployment
+  labels:
+    environment: dev
+    app: hellofromnode
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hellofromnode
+  template:
+    metadata:
+      labels:
+        app: hellofromnode
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      containers:
+      - name: hellofromnode
+        image: newregistryaplvodti8.azurecr.io/hellofromnode:v1.0
+        resources:
+          limits:
+            cpu: 1
+            memory: 800M
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hellofromnode-service
+spec:
+  type: LoadBalancer
+  ports:
+  - protocol: TCP
+    port: 80
+  selector:
+    app: hellofromnode
